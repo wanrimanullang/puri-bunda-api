@@ -16,7 +16,7 @@ class CreateJobPositionsTable extends Migration
         Schema::create('job_positions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->timestampTz(2);
+            $table->timestampTz('created_at');
         });
     }
 

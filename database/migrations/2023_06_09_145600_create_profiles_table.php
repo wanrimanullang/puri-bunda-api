@@ -19,7 +19,7 @@ class CreateProfilesTable extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('unit_id')->nullable()->constrained('units');
             $table->foreignId('job_position_id')->nullable()->constrained('job_positions');
-            $table->timestampTz(2);
+            $table->timestampTz('created_at');
         });
     }
 

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileCreateValidation;
+use App\Http\Requests\UserCreateValidation;
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -15,8 +18,8 @@ class ProfileController extends Controller
      */
     public function index(Request $request)
     {
-        $Data = $request->input('page', 10 );
-        $profileData = Profile::paginate($Data);
+        $data = $request->input('page', 10);
+        $profileData = Profile::paginate($data);
 
         return response()->json($profileData);
     }
@@ -26,10 +29,20 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(ProfileCreateValidation $request)
+
+    public function create(Request $request)
     {
-        $profileCreate = Profile::create($request->validated());
-        return response()->json($profileCreate, 201);
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+        ]); 
+
+        try {
+            $profile = Profile::create($validatedData);
+    
+            return response()->json(['message' => 'Profile created successfully'], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to create profile'], 500);
+        }
     }
 
     /**

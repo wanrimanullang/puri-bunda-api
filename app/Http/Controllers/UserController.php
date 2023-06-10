@@ -36,8 +36,7 @@ class UserController extends Controller
         $user->email = $validatedData['email'];
         $user->password = Hash::make($validatedData['password']);
         $user->save();
-
-        // Mengembalikan respons berhasil
+        
         return response()->json(['message' => 'User created successfully'], 201);
     }
 

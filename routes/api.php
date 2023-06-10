@@ -34,6 +34,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/units/{id}', [UnitController::class, 'destroy']);
 
     Route::post('/profiles', [ProfileController::class, 'create']);
+    Route::get('/profile/{id}', [ProfileController::class, 'show']);
+    Route::put('/profile/{id}', [ProfileController::class, 'update']);
+    Route::delete('/profile/{id}', [ProfileController::class, 'destroy']);
 
     Route::post('/employees', [ProfileController::class, 'index']);
     Route::post('/employees/top', [ProfileController::class, 'CountEmployees']);

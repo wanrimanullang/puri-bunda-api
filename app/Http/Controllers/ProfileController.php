@@ -27,7 +27,7 @@ class ProfileController extends Controller
         $totalUnits = Unit::count();
         $totalJobPositions = JobPosition::count();
         $topEmployees = Profile::orderBy('total_login', 'desc')
-            ->paginate($perPage, ['id','name', 'total_login']);
+            ->paginate($perPage, ['id', 'name', 'total_login']);
 
         $topEmployees->each(function ($employee) {
             $employee->jobPosition = $this->getJobPositionByProfileId($employee->id);
@@ -87,9 +87,12 @@ class ProfileController extends Controller
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function show(Profile $profile)
+    public function show(Profile $profile, $id)
     {
-        //
+        $profile = Profile::findOrFail($id);
+        $profile->jobPosition = $this->getJobPositionByProfileId($profile->id);
+
+        return response()->json(['data' => $profile]);
     }
 
     /**
@@ -112,7 +115,18 @@ class ProfileController extends Controller
      */
     public function update(Request $request, Profile $profile)
     {
-        //
+        $profile = Profile::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'user_id' => 'required',
+            'unit_id' => 'required',
+            'job_position_id' => 'required',
+        ]);
+
+        $profile->update($validatedData);
+
+        return response()->json(['message' => 'Profile updated successfully', 'data' => $profile]);
     }
 
     /**
@@ -121,9 +135,12 @@ class ProfileController extends Controller
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Profile $profile)
+    public function destroy(Profile $profile, $id)
     {
-        //
+        $profile = Profile::findOrFail($id);
+        $profile->delete();
+
+        return response()->json(['message' => 'Profile deleted successfully']);
     }
 
     public function countEmployees(Request $request)

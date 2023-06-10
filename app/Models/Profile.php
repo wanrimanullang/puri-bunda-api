@@ -9,7 +9,7 @@ class Profile extends Model
 {
     use HasFactory;
 
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,11 +22,14 @@ class Profile extends Model
         'job_position_id',
     ];
 
-    public function Unit(){
+    public function unit()
+    {
         return $this->belongsTo(Unit::class);
     }
 
-    public function JobPosition(){
+    public function jobPosition()
+    {
         return $this->hasMany(JobPosition::class);
     }
+
 }

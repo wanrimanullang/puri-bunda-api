@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileCreateValidation;
 use App\Http\Requests\UserCreateValidation;
+use App\Models\JobPosition;
 use App\Models\Profile;
+use App\Models\Unit;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,10 +21,32 @@ class ProfileController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->input('page', 10);
-        $profileData = Profile::paginate($data);
+        $perPage = $request->input('per_page', 10);
+        $totalEmployees = Profile::count();
+        // $loginCounts = Profile::pluck('total_login', 'name');
+        $totalUnits = Unit::count();
+        $totalJobPositions = JobPosition::count();
+        $topEmployees = Profile::orderBy('total_login', 'desc')
+            ->paginate($perPage, ['id','name', 'total_login']);
 
-        return response()->json($profileData);
+        $topEmployees->each(function ($employee) {
+            $employee->jobPosition = $this->getJobPositionByProfileId($employee->id);
+        });
+
+
+        return response()->json([
+            'total_employees' => $totalEmployees,
+            // 'login_counts' => $loginCounts,
+            'total_units' => $totalUnits,
+            'total_job_positions' => $totalJobPositions,
+            'top_employees' => $topEmployees,
+        ]);
+    }
+
+    public function getJobPositionByProfileId($profileId)
+    {
+        $jobPositions = JobPosition::where('profile_id', $profileId)->get();
+        return ($jobPositions);
     }
 
     /**
@@ -34,11 +59,11 @@ class ProfileController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-        ]); 
+        ]);
 
         try {
             $profile = Profile::create($validatedData);
-    
+
             return response()->json(['message' => 'Profile created successfully'], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to create profile'], 500);
@@ -99,5 +124,26 @@ class ProfileController extends Controller
     public function destroy(Profile $profile)
     {
         //
+    }
+
+    public function countEmployees(Request $request)
+    {
+        $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+        $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+
+        $employees = Profile::whereBetween('created_at', [$startDate, $endDate])
+            ->where('total_login', '>', 25)
+            ->orderBy('total_login', 'desc')
+            ->limit(10)
+            ->get(['name', 'total_login']);
+
+        $employeeCount = Profile::whereBetween('created_at', [$startDate, $endDate])->count();
+        $totalLogins = Profile::whereBetween('created_at', [$startDate, $endDate])->sum('total_login');
+
+        return response()->json([
+            'count' => $employeeCount,
+            'total_login' => $totalLogins,
+            'employees' => $employees
+        ]);
     }
 }

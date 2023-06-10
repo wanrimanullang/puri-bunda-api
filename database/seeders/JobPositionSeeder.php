@@ -25,27 +25,38 @@ class JobPositionSeeder extends Seeder
         $jobPositions = [
             [
                 'name' => 'Software Engineer',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 1
+            ],
+            [
+                'name' => 'Software Engineer',
+                'created_at' => $randomTimestamp,
+                'profile_id' => 2
             ],
             [
                 'name' => 'Doctor',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 2
             ],
             [
                 'name' => 'Nurse',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 3
             ],
             [
                 'name' => 'Pharmacist',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 4,
             ],
             [
                 'name' => 'Medical Technologist',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 5
             ],
             [
                 'name' => 'Radiographer',
-                'created_at' => $randomTimestamp
+                'created_at' => $randomTimestamp,
+                'profile_id' => 6
             ],
         ];
 

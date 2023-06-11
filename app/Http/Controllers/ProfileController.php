@@ -23,7 +23,12 @@ class ProfileController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $totalEmployees = Profile::count();
-        // $loginCounts = Profile::pluck('total_login', 'name');
+
+        $loginCounts = Profile::pluck('total_login', 'name');
+        $totalLogin = array_sum($loginCounts->toArray());
+
+
+
         $totalUnits = Unit::count();
         $totalJobPositions = JobPosition::count();
         $topEmployees = Profile::orderBy('total_login', 'desc')
@@ -36,7 +41,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'total_employees' => $totalEmployees,
-            // 'login_counts' => $loginCounts,
+            'login_counts' => $totalLogin,
             'total_units' => $totalUnits,
             'total_job_positions' => $totalJobPositions,
             'top_employees' => $topEmployees,
